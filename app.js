@@ -2,6 +2,7 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const app = express()
 const mongoose = require('mongoose') // 載入 mongoose
+const methodOverride = require("method-override")
 const Restaurant = require('./models/restaurant') // 載入 restaurant model
 const bodyParser = require('body-parser')// 引用 body-parser
 
@@ -14,6 +15,8 @@ app.set('view engine', 'hbs')// 加入這段 code, 僅在非正式環境時, 使
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
+
+app.use(methodOverride("_method"))
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }) // 設定連線到 mongoDB
 
@@ -43,8 +46,8 @@ app.get('/restaurants/new', (req, res) => {
 })
 //新增餐廳
 app.post('/restaurants', (req, res) => {
-  const name = req.body.name       // 從 req.body 拿出表單裡的 name 資料
-  return Restaurant.create({ name })     // 存入資料庫
+  const name = req.body       // 從 req.body 拿出表單裡的 name 資料
+  return Restaurant.create(req.body)     // 存入資料庫
     .then(() => res.redirect('/')) // 新增完成後導回首頁
     .catch(error => console.log(error))
 })
