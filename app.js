@@ -33,6 +33,7 @@ db.once('open', () => {
 
 //設定路由
 
+
 // 瀏覽全部餐廳
 app.get('/', (req, res) => {
   Restaurant.find() // 取出 Todo model 裡的所有資料
@@ -52,6 +53,14 @@ app.post('/restaurants', (req, res) => {
     .catch(error => console.log(error))
 })
 
+//瀏覽特定頁面
+app.get('/restaurants/:id', (req, res) => {
+  const id = req.params.id
+  return Restaurant.findById(id)
+    .lean()
+    .then((restaurant) => res.render('detail', { restaurant }))
+    .catch(error => console.log(error))
+})
 //設定port
 app.listen(3000, () => {
   console.log('app is running on http://localhost3000')
