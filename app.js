@@ -48,7 +48,7 @@ app.get('/restaurants/new', (req, res) => {
 //新增餐廳
 app.post('/restaurants', (req, res) => {
   const name = req.body       // 從 req.body 拿出表單裡的 name 資料
-  return Restaurant.create(req.body)     // 存入資料庫
+  return Restaurant.create(name)     // 存入資料庫
     .then(() => res.redirect('/')) // 新增完成後導回首頁
     .catch(error => console.log(error))
 })
@@ -61,6 +61,25 @@ app.get('/restaurants/:id', (req, res) => {
     .then((restaurant) => res.render('detail', { restaurant }))
     .catch(error => console.log(error))
 })
+
+//編輯餐廳頁面
+app.get('/restaurants/:id/edit', (req, res) => {
+  const id = req.params.id
+  return Restaurant.findById(id)
+    .lean()
+    .then((restaurant) => res.render('edit', { restaurant }))
+    .catch(error => console.log(error))
+})
+//更新餐廳
+app.put("/restaurants/:restaurantId", (req, res) => {
+  const { restaurantId } = req.params
+  return Restaurant.findByIdAndUpdate(restaurantId, req.body)
+    //可依照專案發展方向自定編輯後的動作，這邊是導向到瀏覽特定餐廳頁面
+    .then(() => res.redirect(`/restaurants/${restaurantId}`))
+    .catch(err => console.log(err))
+})
+
+
 //設定port
 app.listen(3000, () => {
   console.log('app is running on http://localhost3000')
