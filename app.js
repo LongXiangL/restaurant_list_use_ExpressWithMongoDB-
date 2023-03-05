@@ -36,11 +36,33 @@ db.once('open', () => {
 
 // 瀏覽全部餐廳
 app.get('/', (req, res) => {
-  Restaurant.find() // 取出 Todo model 裡的所有資料
+  Restaurant.find() // 取出 model 裡的所有資料
     .lean() // 把 Mongoose 的 Model 物件轉換成乾淨的 JavaScript 資料陣列
     .then(restaurants => res.render('index', { restaurants })) // 將資料傳給 index 樣板
     .catch(error => console.error(error)) // 錯誤處理
 })
+
+//index search function
+app.get('/search', (req, res) => {
+  if (!req.query.keywords) {
+    res.redirect("/")
+  }
+  const keywords = req.query.keywords
+  const keyword = req.query.keywords.trim().toLowerCase()
+
+  Restaurant.find({})//資料庫中尋找特定資料
+    .lean()
+    .then(restaurants => {
+      const filterRestaurants = restaurants.filter(
+        restaurantData =>
+          restaurantData.name.toLowerCase().includes(keyword.toLowerCase()) ||
+          restaurantData.category.includes(keyword)
+      )
+      res.render('index', { restaurants: filterRestaurants, keywords })
+    })
+    .catch(error => console.log(error))
+})
+
 //新增餐廳頁面
 app.get('/restaurants/new', (req, res) => {
   return res.render('new')
