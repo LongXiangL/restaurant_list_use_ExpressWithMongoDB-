@@ -1,30 +1,9 @@
 // 引用 Express 與 Express 路由器
 const express = require('express')
 const router = express.Router()
-
 const Restaurant = require('../../models/restaurant') // 載入 restaurant model
 
 
-//index search function
-router.get('/search', (req, res) => {
-  if (!req.query.keywords) {
-    res.redirect("/")
-  }
-  const keywords = req.query.keywords
-  const keyword = req.query.keywords.trim().toLowerCase()
-
-  Restaurant.find({})//資料庫中尋找特定資料
-    .lean()
-    .then(restaurants => {
-      const filterRestaurants = restaurants.filter(
-        restaurantData =>
-          restaurantData.name.toLowerCase().includes(keyword.toLowerCase()) ||
-          restaurantData.category.includes(keyword)
-      )
-      res.render('index', { restaurants: filterRestaurants, keywords })
-    })
-    .catch(error => console.log(error))
-})
 
 //新增餐廳頁面
 router.get('/new', (req, res) => {
