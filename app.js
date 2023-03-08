@@ -2,7 +2,7 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const app = express()
 const mongoose = require('mongoose') // 載入 mongoose
-const methodOverride = require("method-override")
+const methodOverride = require("method-override")// 載入 method-override
 const Restaurant = require('./models/restaurant') // 載入 restaurant model
 const bodyParser = require('body-parser')// 引用 body-parser
 
@@ -16,7 +16,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
-app.use(methodOverride("_method"))
+app.use(methodOverride("_method"))// 設定每一筆請求都會透過 methodOverride 進行前置處理
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }) // 設定連線到 mongoDB
 
@@ -101,14 +101,7 @@ app.put("/restaurants/:restaurantId", (req, res) => {
     .catch(err => console.log(err))
 })
 
-//刪除餐廳
-app.post('/restaurant/:id/delete', (req, res) => {
-  const id = req.params.id
-  return Restaurant.findById(id)
-    .then(restaurant => restaurant.remove())
-    .then(() => res.redirect('/'))
-    .catch(error => console.log(error))
-})
+
 // 刪除餐廳
 app.delete("/restaurants/:restaurantId", (req, res) => {
   const { restaurantId } = req.params
