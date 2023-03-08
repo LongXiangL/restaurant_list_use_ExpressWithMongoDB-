@@ -33,5 +33,16 @@ router.get('/search', (req, res) => {
     .catch(error => console.log(error))
 })
 
+//排列功能
+
+  
+
+    // 按照 A > Z 的顺序排序
+    // 按照 Z > A 的顺序排序
+    // 按照類別排序
+    // 按照地區排序
+  
+  
+
 // 匯出路由模組
 module.exports = router
