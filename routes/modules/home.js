@@ -16,6 +16,7 @@ router.get('/', (req, res) => {
 router.get('/search', (req, res) => {
   if (!req.query.keywords) {
     res.redirect("/")
+    return
   }
   const keywords = req.query.keywords
   const keyword = req.query.keywords.trim().toLowerCase()
@@ -35,14 +36,14 @@ router.get('/search', (req, res) => {
 
 //排列功能
 
-  
 
-    // 按照 A > Z 的顺序排序
-    // 按照 Z > A 的顺序排序
-    // 按照類別排序
-    // 按照地區排序
-  
-  
+
+// 按照 A > Z 的顺序排序
+// 按照 Z > A 的顺序排序
+// 按照類別排序
+// 按照地區排序
+
+
 
 // 匯出路由模組
 module.exports = router
