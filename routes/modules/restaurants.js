@@ -64,8 +64,13 @@ router.put('/:id', (req, res) => {
     rating: req.body.rating,
     description: req.body.description,
   };
-  return Restaurant.findOneAndUpdate({ _id }, restaurantData)
-    .then(() => res.redirect(`/restaurants/${_id}`))
+  //return Restaurant.findOneAndUpdate({ _id }, restaurantData) mongodb4版後棄用，要用需修改參數useFindAndModify: false
+  return Restaurant.findOne({ _id })
+    .then(restaurant => {
+      restaurant.set(restaurantData);
+      return restaurant.save();
+    })  
+  .then(() => res.redirect(`/restaurants/${_id}`))
     .catch(error => console.log(error))
 })
 
