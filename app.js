@@ -1,5 +1,6 @@
 const express = require('express')
 const session = require('express-session')
+const usePassport = require('./config/passport')
 const exphbs = require('express-handlebars')
 const methodOverride = require("method-override")// 載入 method-override
 const bodyParser = require('body-parser')// 引用 body-parser
@@ -20,6 +21,8 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }))
+
+usePassport(app)
 
 app.use(routes)// 將 request 導入路由器
 
