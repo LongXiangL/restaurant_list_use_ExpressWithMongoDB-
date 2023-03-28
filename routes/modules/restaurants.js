@@ -1,5 +1,6 @@
 // 引用 Express 與 Express 路由器
 const express = require('express')
+const restaurant = require('../../models/restaurant')
 const router = express.Router()
 const Restaurant = require('../../models/restaurant') // 載入 restaurant model
 
@@ -11,16 +12,30 @@ router.get('/new', (req, res) => {
 })
 //新增餐廳
 router.post('/', (req, res) => {
-  const name = req.body       // 從 req.body 拿出表單裡的 name 資料
-  return Restaurant.create(name)     // 存入資料庫
-    .then(() => res.redirect('/')) // 新增完成後導回首頁
+  const userId = req.user._id
+  const restaurantData = {
+    name: req.body.name,
+    name_en: req.body.name_en,
+    category: req.body.category,
+    image: req.body.image,
+    location: req.body.location,
+    phone: req.body.phone,
+    google_map: req.body.google_map,
+    rating: req.body.rating,
+    description: req.body.description,
+    userId: userId
+  };
+  return Restaurant.create({ ...restaurantData })
+    .then(() => res.redirect('/'))
     .catch(error => console.log(error))
 })
 
+
 //瀏覽特定頁面
 router.get('/:id', (req, res) => {
-  const id = req.params.id
-  return Restaurant.findById(id)
+  const userId = req.user._id
+  const _id = req.params.id
+  return Restaurant.findOne({ _id, userId })
     .lean()
     .then((restaurant) => res.render('detail', { restaurant }))
     .catch(error => console.log(error))
@@ -28,31 +43,44 @@ router.get('/:id', (req, res) => {
 
 //編輯餐廳頁面
 router.get('/:id/edit', (req, res) => {
-  const id = req.params.id
-  return Restaurant.findById(id)
+  const userId = req.user._id
+  const _id = req.params.id
+  return Restaurant.findOne({ _id, userId })
     .lean()
     .then((restaurant) => res.render('edit', { restaurant }))
     .catch(error => console.log(error))
 })
-//更新餐廳
-router.put("/:restaurantId", (req, res) => {
-  const { restaurantId } = req.params
-  return Restaurant.findByIdAndUpdate(restaurantId, req.body)
-    //可依照專案發展方向自定編輯後的動作，這邊是導向到瀏覽特定餐廳頁面
-    .then(() => res.redirect(`/restaurants/${restaurantId}`))
-    .catch(err => console.log(err))
+// 更新餐廳
+router.put('/:id', (req, res) => {
+  const _id = req.params.id
+  const restaurantData = {
+    name: req.body.name,
+    name_en: req.body.name_en,
+    category: req.body.category,
+    image: req.body.image,
+    location: req.body.location,
+    phone: req.body.phone,
+    google_map: req.body.google_map,
+    rating: req.body.rating,
+    description: req.body.description,
+  };
+  return Restaurant.findOneAndUpdate({ _id }, restaurantData)
+    .then(() => res.redirect(`/restaurants/${_id}`))
+    .catch(error => console.log(error))
 })
+
 
 
 // 刪除餐廳
-router.delete("/:restaurantId", (req, res) => {
-  const { restaurantId } = req.params
-  Restaurant.findByIdAndDelete(restaurantId)
-    .then(() => res.redirect("/"))
-    .catch(err => console.log(err))
+router.delete('/:id', (req, res) => {
+  const userId = req.user._id
+  const _id = req.params.id
+  return Restaurant.findOne({ _id, userId })
+    .then(restaurant => restaurant.remove())
+    .then(() => res.redirect('/'))
+    .catch(error => console.log(error))
+
 })
-
-
 
 
 // 匯出路由模組

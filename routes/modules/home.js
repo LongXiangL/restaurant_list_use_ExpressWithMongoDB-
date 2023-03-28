@@ -5,7 +5,8 @@ const Restaurant = require('../../models/restaurant') // 載入 restaurant model
 
 // 瀏覽全部餐廳
 router.get('/', (req, res) => {
-  Restaurant.find() // 取出 model 裡的所有資料
+  const userId = req.user._id   // 變數設定
+  Restaurant.find({userId}) // 取出 model 裡的所有資料
     .lean() // 把 Mongoose 的 Model 物件轉換成乾淨的 JavaScript 資料陣列
     .sort({ _id: 'asc' }) // 新增這裡：根據 _id 升冪排序
     .then(restaurants => res.render('index', { restaurants })) // 將資料傳給 index 樣板
@@ -20,8 +21,8 @@ router.get('/search', (req, res) => {
   }
   const keywords = req.query.keywords
   const keyword = req.query.keywords.trim().toLowerCase()
-
-  Restaurant.find({})//資料庫中尋找特定資料
+  const userId = req.user._id   // 變數設定
+  Restaurant.find({ userId })//資料庫中尋找特定資料
     .lean()
     .then(restaurants => {
       const filterRestaurants = restaurants.filter(
